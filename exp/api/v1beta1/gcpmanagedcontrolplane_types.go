@@ -57,6 +57,9 @@ type GCPManagedControlPlaneSpec struct {
 	// This feature is disabled if this field is not specified.
 	// +optional
 	MasterAuthorizedNetworksConfig *MasterAuthorizedNetworksConfig `json:"master_authorized_networks_config,omitempty"`
+	// AddonsConfig represents the configuration options for GKE cluster add-ons.
+	// +optional
+	AddonsConfig *AddonsConfig `json:"addonsConfig,omitempty"`
 }
 
 // GCPManagedControlPlaneStatus defines the observed state of GCPManagedControlPlane.
@@ -140,6 +143,40 @@ type MasterAuthorizedNetworksConfigCidrBlock struct {
 	// cidr_block must be specified in CIDR notation.
 	// +kubebuilder:validation:Pattern=`^(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?:\/([0-9]|[1-2][0-9]|3[0-2]))?$|^([a-fA-F0-9:]+:+)+[a-fA-F0-9]+\/[0-9]{1,3}$`
 	CidrBlock string `json:"cidr_block,omitempty"`
+}
+
+// AddonsConfig contains configurations for various add-ons available to run in the GKE cluster.
+type AddonsConfig struct {
+	// DNSCacheConfig represents a configuration for NodeLocalDNS, a dns cache running on GKE cluster nodes
+	// If omitted it is disabled by default.
+	// +optional
+	DNSCacheConfig *DNSCacheConfig `json:"dnsCacheConfig,omitempty"`
+	// GcePersistentDiskCsiDriverConfig represents a configuration for the Compute Engine Persistent Disk CSI driver
+	// If omitted it is enabled by default.
+	// +optional
+	GcePersistentDiskCsiDriverConfig *GcePersistentDiskCsiDriverConfig `json:"gcePersistentDiskCsiDriverConfig,omitempty"`
+	// NetworkPolicyConfig represents a configuration for the Network Policy
+	// If omitted it is disabled by default.
+	// +optional
+	NetworkPolicyConfig *NetworkPolicyConfig `json:"networkPolicyConfig,omitempty"`
+}
+
+// DNSCacheConfig contains configurations for NodeLocalDNS, a dns cache running on cluster nodes.
+type DNSCacheConfig struct {
+	// Enabled defines whether or not NodeLocal DNSCache is enabled for the GKE cluster
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+// GcePersistentDiskCsiDriverConfig contains configurations for the Compute Engine Persistent Disk CSI driver.
+type GcePersistentDiskCsiDriverConfig struct {
+	// Enabled defines whether or not the Compute Engine PD CSI driver is enabled for the GKE cluster.
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+// NetworkPolicyConfig contains configurations for the Network Policy.
+type NetworkPolicyConfig struct {
+	// Disabled defines whether or not Network Policy is disabled for the GKE cluster
+	Disabled bool `json:"disabled,omitempty"`
 }
 
 // GetConditions returns the control planes conditions.

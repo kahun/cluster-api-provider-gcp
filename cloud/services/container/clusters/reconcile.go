@@ -268,6 +268,9 @@ func (s *Service) createCluster(ctx context.Context, log *logr.Logger) error {
 	if !s.scope.IsAutopilotCluster() {
 		cluster.NodePools = scope.ConvertToSdkNodePools(nodePools, machinePools, isRegional, cluster.Name)
 	}
+	if s.scope.GCPManagedControlPlane.Spec.AddonsConfig != nil {
+		cluster.AddonsConfig = infrav1exp.ConvertToSdkAddonsConfig(s.scope.GCPManagedControlPlane.Spec.AddonsConfig)
+	}
 
 	createClusterRequest := &containerpb.CreateClusterRequest{
 		Cluster: cluster,
@@ -402,6 +405,13 @@ func (s *Service) checkDiffAndPrepareUpdate(existingCluster *containerpb.Cluster
 	log.V(4).Info("Master authorized networks config update check", "current", existingCluster.MasterAuthorizedNetworksConfig)
 	if desiredMasterAuthorizedNetworksConfig != nil {
 		log.V(4).Info("Master authorized networks config update check", "desired", desiredMasterAuthorizedNetworksConfig)
+	}
+
+	desiredAddonsConfig := infrav1exp.ConvertToSdkAddonsConfig(s.scope.GCPManagedControlPlane.Spec.AddonsConfig)
+	if desiredAddonsConfig != existingCluster.AddonsConfig {
+		needUpdate = true
+		clusterUpdate.DesiredAddonsConfig = desiredAddonsConfig
+		log.V(2).Info("Addons config update required", "current", existingCluster.AddonsConfig, "desired", desiredAddonsConfig)
 	}
 
 	updateClusterRequest := containerpb.UpdateClusterRequest{

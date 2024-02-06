@@ -57,6 +57,40 @@ spec:
           spec:
             description: GCPManagedControlPlaneSpec defines the desired state of GCPManagedControlPlane.
             properties:
+              addonsConfig:
+                description: AddonsConfig represents the configuration options for
+                  GKE cluster add-ons.
+                properties:
+                  dnsCacheConfig:
+                    description: DNSCacheConfig represents a configuration for NodeLocalDNS,
+                      a dns cache running on GKE cluster nodes If omitted it is disabled
+                      by default.
+                    properties:
+                      enabled:
+                        description: Enabled defines whether or not NodeLocal DNSCache
+                          is enabled for the GKE cluster
+                        type: boolean
+                    type: object
+                  gcePersistentDiskCsiDriverConfig:
+                    description: GcePersistentDiskCsiDriverConfig represents a configuration
+                      for the Compute Engine Persistent Disk CSI driver If omitted
+                      it is enabled by default.
+                    properties:
+                      enabled:
+                        description: Enabled defines whether or not the Compute Engine
+                          PD CSI driver is enabled for the GKE cluster.
+                        type: boolean
+                    type: object
+                  networkPolicyConfig:
+                    description: NetworkPolicyConfig represents a configuration for
+                      the Network Policy If omitted it is disabled by default.
+                    properties:
+                      disabled:
+                        description: Disabled defines whether or not Network Policy
+                          is disabled for the GKE cluster
+                        type: boolean
+                    type: object
+                type: object
               clusterName:
                 description: ClusterName allows you to specify the name of the GKE
                   cluster. If you don't specify a name then a default name will be

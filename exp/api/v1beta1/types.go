@@ -144,3 +144,42 @@ func ConvertToSdkLinuxNodeConfig(linuxNodeConfig *LinuxNodeConfig) *containerpb.
 	}
 	return &sdkLinuxNodeConfig
 }
+
+func ConvertToSdkAddonsConfig(config *AddonsConfig) *containerpb.AddonsConfig {
+	addonsConfig := &containerpb.AddonsConfig{
+		KubernetesDashboard: &containerpb.KubernetesDashboard{
+			Disabled: true,
+		},
+		GcePersistentDiskCsiDriverConfig: &containerpb.GcePersistentDiskCsiDriverConfig{
+			Enabled: true,
+		},
+		NetworkPolicyConfig: &containerpb.NetworkPolicyConfig{
+			Disabled: true,
+		},
+	}
+
+	// If not specified return defaults
+	if config == nil {
+		return addonsConfig
+	}
+
+	if config.DNSCacheConfig != nil {
+		addonsConfig.DnsCacheConfig = &containerpb.DnsCacheConfig{
+			Enabled: config.DNSCacheConfig.Enabled,
+		}
+	}
+
+	if config.GcePersistentDiskCsiDriverConfig != nil {
+		addonsConfig.GcePersistentDiskCsiDriverConfig = &containerpb.GcePersistentDiskCsiDriverConfig{
+			Enabled: config.GcePersistentDiskCsiDriverConfig.Enabled,
+		}
+	}
+
+	if config.NetworkPolicyConfig != nil {
+		addonsConfig.NetworkPolicyConfig = &containerpb.NetworkPolicyConfig{
+			Disabled: config.NetworkPolicyConfig.Disabled,
+		}
+	}
+
+	return addonsConfig
+}
